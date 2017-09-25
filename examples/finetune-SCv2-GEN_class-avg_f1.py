@@ -24,6 +24,8 @@ from deepmoji.class_avg_finetuning import class_avg_finetune
 from deepmoji.model_def import deepmoji_transfer
 from deepmoji.global_variables import PRETRAINED_PATH
 
+import numpy as np
+
 DATASET_PATH = '../data/SCv2-GEN/raw.pickle'
 nb_classes = 3
 
@@ -36,6 +38,11 @@ with open('../model/vocabulary.json', 'r') as f:
 # Load dataset. Extend the existing vocabulary with up to 10000 tokens from
 # the training dataset.
 data = load_benchmark(DATASET_PATH, vocab, extend_with=10000)
+
+# Add singleton dim if needed
+for ls in data['labels']:
+    if len(ls.shape) == 1:
+        ls = ls[:,np.newaxis]
 
 # Set up model and finetune. Note that we have to extend the embedding layer
 # with the number of tokens added to the vocabulary.
