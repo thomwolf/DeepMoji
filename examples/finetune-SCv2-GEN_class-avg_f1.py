@@ -42,7 +42,11 @@ data = load_benchmark(DATASET_PATH, vocab, extend_with=10000)
 # Add singleton dim if needed
 for ls in data['labels']:
     if len(ls.shape) == 1:
-        ls = ls[:,np.newaxis]
+        print("Adding axis")
+        ls = ls[:, np.newaxis]
+
+for ls in data['labels']:
+    print("ls.shape", ls.shape)
 
 # Set up model and finetune. Note that we have to extend the embedding layer
 # with the number of tokens added to the vocabulary.
