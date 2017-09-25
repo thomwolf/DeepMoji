@@ -40,10 +40,10 @@ with open('../model/vocabulary.json', 'r') as f:
 data = load_benchmark(DATASET_PATH, vocab, extend_with=10000)
 
 # Add singleton dim if needed
-for ls in data['labels']:
-    if len(ls.shape) == 1:
+for i in range(len(data['labels'])):
+    if len(data['labels'][i].shape) == 1:
         print("Adding axis")
-        ls = ls[:, np.newaxis]
+        data['labels'][i] = data['labels'][i][:, np.newaxis]
 
 for ls in data['labels']:
     print("ls.shape", ls.shape)
