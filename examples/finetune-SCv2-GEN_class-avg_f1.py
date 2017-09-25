@@ -27,7 +27,7 @@ from deepmoji.global_variables import PRETRAINED_PATH
 import numpy as np
 
 DATASET_PATH = '../data/SCv2-GEN/raw.pickle'
-nb_classes = 3
+nb_classes = 2
 
 save_path = '../model/SCv2-GEN_weights.hdf5'
 
