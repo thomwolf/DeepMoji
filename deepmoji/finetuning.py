@@ -106,7 +106,7 @@ def calculate_batchsize_maxlen(texts):
     return batch_size, maxlen
 
 
-def finetuning_callbacks(checkpoint_path, patience, verbose):
+def finetuning_callbacks(checkpoint_path, patience, verbose=False):
     """ Callbacks for model training.
 
     # Arguments:
