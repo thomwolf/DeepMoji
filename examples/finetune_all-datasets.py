@@ -54,9 +54,8 @@ for (dataset_name, data_file, nb_classes, measure) in data_files:
     print("Training model on", dataset_name, "located in", data_file,
           "with", nb_classes, "classes, measuring", measure, "and saving in", save_path)
 
-    # Load dataset. Extend the existing vocabulary with up to 10000 tokens from
-    # the training dataset.
-    data = load_benchmark(data_file, vocab, extend_with=10000)
+    # Load dataset. Don't extend the existing vocabulary (we want a signle voc for all tasks)
+    data = load_benchmark(data_file, vocab, extend_with=0)
 
     # Add singleton dim if needed
     for i in range(len(data['labels'])):
@@ -93,5 +92,4 @@ for (dataset_name, data_file, nb_classes, measure) in data_files:
         print("Training finished, final accuracy:", acc)
 
     model.save_weights(save_path)
-
-    print('F1: {}'.format(f1))
+    print("Saved model in", save_path)
