@@ -57,14 +57,15 @@ for (dataset_name, data_file, nb_classes, measure) in data_files:
     # Load dataset. Don't extend the existing vocabulary (we want a signle voc for all tasks)
     data = load_benchmark(data_file, vocab, extend_with=0)
 
-    # Add singleton dim if needed
-    for i in range(len(data['labels'])):
-        if len(data['labels'][i].shape) == 1:
-            print("Adding axis")
-            data['labels'][i] = data['labels'][i][:, np.newaxis]
+    if measure == 'f1':
+        # Add singleton dim if needed
+        for i in range(len(data['labels'])):
+            if len(data['labels'][i].shape) == 1:
+                print("Adding axis")
+                data['labels'][i] = data['labels'][i][:, np.newaxis]
 
-    for ls in data['labels']:
-        print("ls.shape", ls.shape)
+        for ls in data['labels']:
+            print("ls.shape", ls.shape)
 
     if measure == 'f1':
         # Set up model and finetune. Note that we have to extend the embedding layer
