@@ -35,9 +35,9 @@ CLASSES_NB = {'kaggle-insults': 2, 'Olympic': 4, 'PsychExp': 7,
               'SCv1': 2, 'SCv2-GEN': 2, 'SE0714': 3,
               'SS-Twitter': 2, 'SS-Youtube': 2}
 
-MEASURE = {'kaggle-insults': 'acc', 'Olympic': 'f1', 'PsychExp': 'f1',
-              'SCv1': 'f1', 'SCv2-GEN': 'f1', 'SE0714': 'f1',
-              'SS-Twitter': 'acc', 'SS-Youtube': 'acc'}
+MEASURE = {'kaggle-insults': 'acc', 'Olympic': 'weighted_f1', 'PsychExp': 'weighted_f1',
+           'SCv1': 'weighted_f1', 'SCv2-GEN': 'weighted_f1', 'SE0714': 'weighted_f1',
+           'SS-Twitter': 'acc', 'SS-Youtube': 'acc'}
 
 with open('../model/vocabulary.json', 'r') as f:
     vocab = json.load(f)
@@ -67,30 +67,30 @@ for (dataset_name, data_file, nb_classes, measure) in data_files:
         for ls in data['labels']:
             print("ls.shape", ls.shape)
 
-    if measure == 'f1':
-        # Set up model and finetune. Note that we have to extend the embedding layer
-        # with the number of tokens added to the vocabulary.
-        #
-        # Also note that when using class average F1 to evaluate, the model has to be
-        # defined with two classes, since the model will be trained for each class
-        # separately.
-        model = deepmoji_transfer(2, data['maxlen'], PRETRAINED_PATH,
-                                extend_embedding=data['added'])
-        model.summary()
+    # if measure == 'f1':
+    #     # Set up model and finetune. Note that we have to extend the embedding layer
+    #     # with the number of tokens added to the vocabulary.
+    #     #
+    #     # Also note that when using class average F1 to evaluate, the model has to be
+    #     # defined with two classes, since the model will be trained for each class
+    #     # separately.
+    #     model = deepmoji_transfer(2, data['maxlen'], PRETRAINED_PATH,
+    #                             extend_embedding=data['added'])
+    #     model.summary()
 
-        # For finetuning however, pass in the actual number of classes.
-        model, f1 = class_avg_finetune(model, data['texts'], data['labels'],
-                                       nb_classes, data['batch_size'], method='last')
-        print("Training finished, final class average F1:", f1)
-    else:
-        model = deepmoji_transfer(nb_classes, data['maxlen'], PRETRAINED_PATH,
-                                extend_embedding=data['added'])
-        model.summary()
+    #     # For finetuning however, pass in the actual number of classes.
+    #     model, f1 = class_avg_finetune(model, data['texts'], data['labels'],
+    #                                    nb_classes, data['batch_size'], method='last')
+    #     print("Training finished, final class average F1:", f1)
+    # else:
+    model = deepmoji_transfer(nb_classes, data['maxlen'], PRETRAINED_PATH,
+                              extend_embedding=data['added'])
+    model.summary()
 
-        # Finetuning and measuring result on accuracy
-        model, acc = finetune(model, data['texts'], data['labels'],
-                     nb_classes, data['batch_size'], method='last')
-        print("Training finished, final accuracy:", acc)
+    # Finetuning and measuring result on accuracy
+    model, metr = finetune(model, data['texts'], data['labels'],
+                          nb_classes, data['batch_size'], method='last', metric=measure)
+    print("Training finished, final", measure, ":", metr)
 
     model.save_weights(save_path)
     print("Saved model in", save_path)
