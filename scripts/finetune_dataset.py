@@ -27,8 +27,8 @@ DATASETS = [
      ('SE0714', '../data/SE0714/raw.pickle', 3, True),
      ('Olympic', '../data/Olympic/raw.pickle', 4, True),
      ('PsychExp', '../data/PsychExp/raw.pickle', 7, True),
-     ('SS-Twitter', '../data/SS-Twitter/raw.pickle', 2, False),
-     ('SS-Youtube', '../data/SS-Youtube/raw.pickle', 2, False),
+     #('SS-Twitter', '../data/SS-Twitter/raw.pickle', 2, False),
+     #('SS-Youtube', '../data/SS-Youtube/raw.pickle', 2, False),
      #('SE1604', '../data/SE1604/raw.pickle', 3, False), # Excluded due to Twitter's ToS
      ('SCv1', '../data/SCv1/raw.pickle', 2, True),
      ('SCv2-GEN', '../data/SCv2-GEN/raw.pickle', 2, True)
@@ -83,10 +83,12 @@ for rerun_iter in range(5):
         # Training
         print('Training: {}'.format(path))
         if use_f1_score:
+            checkpoint_path = '{}/{}'.format(RESULTS_DIR, dset)
+            print('Saving weights in {}'.format(checkpoint_path))
             model, result = class_avg_finetune(model, data['texts'],
                                                data['labels'],
                                                nb_classes, data['batch_size'],
-                                               FINETUNE_METHOD,
+                                               FINETUNE_METHOD, checkpoint_path,
                                                verbose=VERBOSE)
         else:
             model, result = finetune(model, data['texts'], data['labels'],

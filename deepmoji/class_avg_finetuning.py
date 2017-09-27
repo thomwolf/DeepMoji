@@ -46,7 +46,7 @@ def relabel(y, current_label_nr, nb_classes):
 
 
 def class_avg_finetune(model, texts, labels, nb_classes, batch_size,
-                       method, epoch_size=5000,
+                       method, checkpoint_path, epoch_size=5000,
                        nb_epochs=1000, error_checking=True,
                        verbose=True):
     """ Compiles and finetunes the given model.
@@ -82,8 +82,8 @@ def class_avg_finetune(model, texts, labels, nb_classes, batch_size,
     (X_val, y_val) = (texts[1], labels[1])
     (X_test, y_test) = (texts[2], labels[2])
 
-    checkpoint_path = '{}/deepmoji-checkpoint-{}.hdf5' \
-                      .format(WEIGHTS_DIR, str(uuid.uuid4()))
+    # checkpoint_path = '{}/deepmoji-checkpoint-{}.hdf5' \
+    #                   .format(WEIGHTS_DIR, str(uuid.uuid4()))
 
     f1_init_path = '{}/deepmoji-f1-init-{}.hdf5' \
                    .format(WEIGHTS_DIR, str(uuid.uuid4()))
@@ -143,7 +143,7 @@ def class_avg_finetune(model, texts, labels, nb_classes, batch_size,
                                           nb_epochs=nb_epochs,
                                           batch_size=batch_size,
                                           init_weight_path=f1_init_path,
-                                          checkpoint_weight_path=checkpoint_path,
+                                          checkpoint_path=checkpoint_path,
                                           verbose=verbose)
     return model, result
 
@@ -168,7 +168,7 @@ def prepare_generators(X_train, y_train_new, X_val, y_val_new, batch_size, epoch
 
 def class_avg_tune_trainable(model, nb_classes, train, val, test, epoch_size,
                              nb_epochs, batch_size, init_weight_path,
-                             checkpoint_weight_path, patience=5,
+                             checkpoint_path, patience=5,
                              verbose=True):
     """ Finetunes the given model using the F1 measure.
 
@@ -183,7 +183,7 @@ def class_avg_tune_trainable(model, nb_classes, train, val, test, epoch_size,
         batch_size: Batch size.
         init_weight_path: Filepath where weights will be initially saved before
             training each class. This file will be rewritten by the function.
-        checkpoint_weight_path: Filepath where weights will be checkpointed to
+        checkpoint_path: Filepath where weights will be checkpointed to
             during training. This file will be rewritten by the function.
         verbose: Verbosity flag.
 
@@ -202,6 +202,9 @@ def class_avg_tune_trainable(model, nb_classes, train, val, test, epoch_size,
     # each class to avoid learning across classes
     model.save_weights(init_weight_path)
     for i in range(nb_iter):
+
+        checkpoint_weight_path = checkpoint_path + '_class_{}.hdf5'.format(i)
+
         if verbose:
             print('Iteration number {}/{}'.format(i+1, nb_iter))
 
