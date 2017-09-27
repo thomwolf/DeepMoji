@@ -24,9 +24,9 @@ def roundup(x):
 #          nb_classes,
 #          use_f1_score)
 DATASETS = [
-     ('SE0714', '../data/SE0714/raw.pickle', 3, True),
-     ('Olympic', '../data/Olympic/raw.pickle', 4, True),
-     ('PsychExp', '../data/PsychExp/raw.pickle', 7, True),
+     #('SE0714', '../data/SE0714/raw.pickle', 3, True),
+     #('Olympic', '../data/Olympic/raw.pickle', 4, True),
+     #('PsychExp', '../data/PsychExp/raw.pickle', 7, True),
      #('SS-Twitter', '../data/SS-Twitter/raw.pickle', 2, False),
      #('SS-Youtube', '../data/SS-Youtube/raw.pickle', 2, False),
      #('SE1604', '../data/SE1604/raw.pickle', 3, False), # Excluded due to Twitter's ToS
@@ -47,7 +47,7 @@ epoch_size = 1000
 with open(VOCAB_PATH, 'r') as f:
     vocab = json.load(f)
 
-for rerun_iter in range(5):
+for rerun_iter in [1]:#range(5):
     for p in DATASETS:
 
         # debugging
@@ -67,6 +67,16 @@ for rerun_iter in range(5):
 
         # Load dataset.
         data = load_benchmark(path, vocab, extend_with=extend_with)
+
+        if use_f1_score:
+            # Add singleton dim if needed
+            for i in range(len(data['labels'])):
+                if len(data['labels'][i].shape) == 1:
+                    print("Adding axis")
+                    data['labels'][i] = data['labels'][i][:, np.newaxis]
+
+            for ls in data['labels']:
+                print("ls.shape", ls.shape)
 
         (X_train, y_train) = (data['texts'][0], data['labels'][0])
         (X_val, y_val) = (data['texts'][1], data['labels'][1])
