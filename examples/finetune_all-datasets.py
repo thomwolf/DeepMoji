@@ -31,13 +31,18 @@ DATASET_PATH = '../data/'
 
 GLOBAL_SAVE_PATH = '../model/{}_weights.hdf5'
 
-CLASSES_NB = {'kaggle-insults': 2, 'Olympic': 4, 'PsychExp': 7,
-              'SCv1': 2, 'SCv2-GEN': 2, 'SE0714': 3,
-              'SS-Twitter': 2, 'SS-Youtube': 2}
+# CLASSES_NB = {'kaggle-insults': 2, 'Olympic': 4, 'PsychExp': 7,
+#               'SCv1': 2, 'SCv2-GEN': 2, 'SE0714': 3,
+#               'SS-Twitter': 2, 'SS-Youtube': 2}
 
-MEASURE = {'kaggle-insults': 'acc', 'Olympic': 'weighted_f1', 'PsychExp': 'weighted_f1',
-           'SCv1': 'weighted_f1', 'SCv2-GEN': 'weighted_f1', 'SE0714': 'weighted_f1',
-           'SS-Twitter': 'acc', 'SS-Youtube': 'acc'}
+# MEASURE = {'kaggle-insults': 'acc', 'Olympic': 'weighted_f1', 'PsychExp': 'weighted_f1',
+#            'SCv1': 'weighted_f1', 'SCv2-GEN': 'weighted_f1', 'SE0714': 'weighted_f1',
+#            'SS-Twitter': 'acc', 'SS-Youtube': 'acc'}
+
+CLASSES_NB = {'Olympic': 4, 'PsychExp': 7,'SE0714': 3}
+
+MEASURE = {'Olympic': 'weighted_f1', 'PsychExp': 'weighted_f1',
+           'SE0714': 'weighted_f1'}
 
 with open('../model/vocabulary.json', 'r') as f:
     vocab = json.load(f)
@@ -57,7 +62,7 @@ for (dataset_name, data_file, nb_classes, measure) in data_files:
     # Load dataset. Don't extend the existing vocabulary (we want a signle voc for all tasks)
     data = load_benchmark(data_file, vocab, extend_with=0)
 
-    if measure == 'f1':
+    if measure == 'weighted_f1':
         # Add singleton dim if needed
         for i in range(len(data['labels'])):
             if len(data['labels'][i].shape) == 1:
